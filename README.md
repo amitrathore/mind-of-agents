@@ -12,11 +12,9 @@ python3 -m http.server 8000 --directory docs
 
 Open <http://localhost:8000/>.
 
-## Publish with GitHub Pages
+## GitHub Pages
 
-In the repository's **Settings → Pages**, choose **Deploy from a branch**, branch `main`, folder `/docs`. GitHub Pages will serve the site at `https://amitrathore.github.io/mind-of-agents/` if the repository is `amitrathore/mind-of-agents`.
-
-The site currently assumes that URL for canonical and Open Graph metadata. If the GitHub owner, repository name, or domain differs, update the absolute URLs in the HTML files before publishing. Page links and asset paths are relative, so they work under either a project path or a custom domain.
+The site is published from `main` and `/docs` at <https://mindofagents.com/>. The `docs/CNAME` file declares the custom domain. Canonical and social metadata use the same URL.
 
 ## Contents
 
