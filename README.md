@@ -1,6 +1,6 @@
 # Mind of Agents
 
-An open field guide to the philosophy and design of agentic minds. The site is a companion to the book. OpenTangle is one implementation of these ideas, and Agents of Mind is a related builder community.
+An open field guide to the philosophy and design of agentic minds. The site is a companion to the book. Opentangle is one implementation of these ideas, and Agents of Mind is a related builder community.
 
 ## Preview
 
