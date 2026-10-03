@@ -20,6 +20,7 @@ The site is published from `main` and `/docs` at <https://mindofagents.com/>. Th
 
 - `docs/index.html` — landing page
 - `docs/read/` — book outline and published chapters
+- `docs/preface/` — the preface as a web page, linked as Why
 - `docs/downloads/` — current branded PDF edition
 - `book/` — PDF builder, preface draft, and source notes
 - `docs/anatomy/` — interactive architecture and research notes
@@ -33,3 +34,5 @@ The social image is intentionally a raster asset; the interface illustration and
 ## Book PDF
 
 Run `python3 book/build_book.py` to rebuild `docs/downloads/mind-of-agents-current-edition.pdf` from the seven published chapters. See `book/README.md` for requirements, review steps, and preface source notes.
+
+The preface web page is generated from `book/preface.md` with `python3 book/build_preface.py`.
