@@ -14,7 +14,7 @@ Open <http://localhost:8000/>.
 
 ## GitHub Pages
 
-The site is published from `main` and `/docs` at <https://mindofagents.com/>. The `docs/CNAME` file declares the custom domain. Canonical and social metadata use the same URL.
+The site is published from `main` and `/docs` at <https://www.mindofagents.com/>. `docs/CNAME` makes `www` canonical. Cloudflare routes the existing Agents of Mind game endpoints through `edge/worker.mjs` on the same origin, while GitHub Pages serves the book. The apex redirects to `www`.
 
 ## Contents
 
@@ -37,3 +37,7 @@ The social image is intentionally a raster asset; the interface illustration and
 Run `python3 book/build_book.py` to rebuild `docs/downloads/mind-of-agents-current-edition.pdf` from all twelve published chapters. See `book/README.md` for requirements, review steps, and preface source notes.
 
 The preface web page is generated from `book/preface.md` with `python3 book/build_preface.py`.
+
+## Agents of Mind game surface
+
+`docs/assets/game.js` adds first-party sign-in, a shared AoM handle, Coselling activation, and page-specific share links throughout the site. A referred visit posts to the existing AoM game, where anonymous visitor history can be claimed after sign-in. `docs/download/` is the shareable landing page for the PDF; direct PDF bytes cannot run attribution code. The edge Worker proxies only named game endpoints and leaves book content on GitHub Pages.
