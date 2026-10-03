@@ -6,7 +6,7 @@
 <blockquote>A mind must be able to tell the difference between an intended move and a changed world.</blockquote>
 <h2>Make the action small enough to understand.</h2>
 <p>“Fix the import problem” is a wish. An actionable instruction names the path to pause, the permission to do so, the observable result, and the point at which the actor must return for review. The code agent can prepare a patch and run a narrow test. The creator can approve a release. The tester can repeat the steps that exposed the issue. These are distinct moves, with distinct authority.</p>
-<p>Before an agent uses a tool, the mind should know which capability it is invoking and within what boundary. Reading a log, editing a branch, disabling a production route, and notifying affected users carry different consequences. Delegation should specify the allowed action, the resource it may touch, a limit on time or scope, and what requires a human decision. A role name alone is too broad to answer those questions.</p>
+<p>Before an agent uses a tool, the mind should know which <a href="../../glossary/#capability">capability</a> it is invoking and within what boundary. Reading a log, editing a branch, disabling a production route, and notifying affected users carry different consequences. Delegation should specify the allowed action, the resource it may touch, a limit on time or scope, and what requires a human decision. A role name alone is too broad to answer those questions.</p>
 <p>Small steps improve recovery. The team can disable the affected import route without taking down every import. It can test a fix in an isolated environment before release. It can prepare a rollback before changing production. Reversibility is not always available, but the mind should identify it before acting rather than after a mistake.</p>
 <h2>Observe what actually happened.</h2>
 <p>After an action, the first useful question is not “Did the agent finish?” It is “What changed, and how do we know?” A tool call may return success while the expected state never appears. A message may be accepted for delivery while the recipient remains offline. A draft may be approved while publication fails. The system needs observations at the boundary where the world was meant to change.</p>
@@ -41,7 +41,7 @@
       </div>
       <nav class="footer-column" aria-label="Explore the book">
         <h2>Explore</h2>
-        <a href="../../read/">Read the book</a><a href="../../preface/">Preface</a><a href="../../anatomy/">Anatomy</a>
+        <a href="../../read/">Read the book</a><a href="../../preface/">Preface</a><a href="../../anatomy/">Anatomy</a><a href="../../glossary/">Glossary</a>
         <a href="../../design/">Design exercise</a>
         <a href="../../about/">About the project</a>
       </nav>
