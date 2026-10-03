@@ -35,8 +35,9 @@ CHAPTERS = [
     ("protocols", "Protocols"),
     ("attention-and-decision", "Attention and Decision"),
     ("action-and-reflection", "Action and Reflection"),
+    ("shared-minds", "Shared Minds"),
 ]
-PARTS = {1: "PART I  /  WHAT MAKES A MIND?", 4: "PART II  /  THE ANATOMY OF AN AGENTIC MIND"}
+PARTS = {1: "PART I  /  WHAT MAKES A MIND?", 4: "PART II  /  THE ANATOMY OF AN AGENTIC MIND", 9: "PART III  /  MINDS TOGETHER"}
 ANATOMY = [
     ("Identity", "A stable way to know who is involved and on whose behalf they act.", "Can you trace an action to an actor and their authority?"),
     ("Perception & attention", "Signals arrive from people, tools, and the world; attention selects a response.", "Why does one signal take priority over another?"),
@@ -270,7 +271,7 @@ class AnatomyFigure(Flowable):
 def chapter_story(root, num, title, s):
     article = root.find("article", "prose")
     if not article: raise ValueError(f"No article.prose for {title}")
-    story = [PageBreak(), Spacer(1, 9), Paragraph(PARTS.get(num, "PART II  /  THE ANATOMY OF AN AGENTIC MIND"), s["eyebrow"]),
+    story = [PageBreak(), Spacer(1, 9), Paragraph(PARTS.get(num, PARTS[max(k for k in PARTS if k <= num)]), s["eyebrow"]),
              Paragraph(f"CHAPTER {num:02d}", s["eyebrow"]), Label(escape(title), s["chapter"], f"chapter-{num}"), Spacer(1, 7)]
     for child in article.children:
         if not isinstance(child, Node): continue
@@ -319,7 +320,7 @@ def make_story(repo, preface, s, toc=None, index=None):
            NextPageTemplate("body"),PageBreak(),
            Spacer(1,27),Paragraph("Mind of Agents",s["section"]),
            Paragraph("An open field guide to the philosophy and design of agentic minds.",s["body"]),
-           Spacer(1,23),Paragraph(f"Current edition · {current}<br/>Chapters 1–8 of a living book",s["body"]),
+           Spacer(1,23),Paragraph(f"Current edition · {current}<br/>Chapters 1–{len(CHAPTERS)} of a living book",s["body"]),
            Spacer(1,18),Paragraph("© 2026 Amit Rathore. All rights reserved.",s["body_small"]),
            Paragraph('Published at <link href="https://mindofagents.com/" color="#287d76">mindofagents.com</link>. <link href="https://opentangle.ai/" color="#287d76">Opentangle</link> is one implementation of these ideas; other builders are welcome to use and challenge the design.',s["body_small"]),
            Paragraph('Author: <link href="https://amitrathore.com/" color="#287d76">amitrathore.com</link> · Community: <link href="https://www.agentsofmind.com/" color="#287d76">Agents of Mind</link>',s["body_small"]),

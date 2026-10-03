@@ -34,6 +34,6 @@ The social image is intentionally a raster asset; the interface illustration and
 
 ## Book PDF
 
-Run `python3 book/build_book.py` to rebuild `docs/downloads/mind-of-agents-current-edition.pdf` from the eight published chapters. See `book/README.md` for requirements, review steps, and preface source notes.
+Run `python3 book/build_book.py` to rebuild `docs/downloads/mind-of-agents-current-edition.pdf` from the nine published chapters. See `book/README.md` for requirements, review steps, and preface source notes.
 
 The preface web page is generated from `book/preface.md` with `python3 book/build_preface.py`.
