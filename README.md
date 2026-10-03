@@ -20,6 +20,8 @@ The site is published from `main` and `/docs` at <https://mindofagents.com/>. Th
 
 - `docs/index.html` — landing page
 - `docs/read/` — book outline and published chapters
+- `docs/downloads/` — current branded PDF edition
+- `book/` — PDF builder, preface draft, and source notes
 - `docs/anatomy/` — interactive architecture and research notes
 - `docs/design/` — private, in-browser design exercise
 - `docs/about/` — project relationship and scope
@@ -27,3 +29,7 @@ The site is published from `main` and `/docs` at <https://mindofagents.com/>. Th
 - `docs/assets/mark.svg` — favicon and site mark
 
 The social image is intentionally a raster asset; the interface illustration and favicon are SVG. The design exercise stores and transmits no answers.
+
+## Book PDF
+
+Run `python3 book/build_book.py` to rebuild `docs/downloads/mind-of-agents-current-edition.pdf` from the seven published chapters. See `book/README.md` for requirements, review steps, and preface source notes.
