@@ -34,6 +34,7 @@ CHAPTERS = [
     ("memory-and-context", "Memory and Context"),
     ("protocols", "Protocols"),
     ("attention-and-decision", "Attention and Decision"),
+    ("action-and-reflection", "Action and Reflection"),
 ]
 PARTS = {1: "PART I  /  WHAT MAKES A MIND?", 4: "PART II  /  THE ANATOMY OF AN AGENTIC MIND"}
 ANATOMY = [
@@ -318,9 +319,9 @@ def make_story(repo, preface, s, toc=None, index=None):
            NextPageTemplate("body"),PageBreak(),
            Spacer(1,27),Paragraph("Mind of Agents",s["section"]),
            Paragraph("An open field guide to the philosophy and design of agentic minds.",s["body"]),
-           Spacer(1,23),Paragraph(f"Current edition · {current}<br/>Chapters 1–7 of a living book",s["body"]),
+           Spacer(1,23),Paragraph(f"Current edition · {current}<br/>Chapters 1–8 of a living book",s["body"]),
            Spacer(1,18),Paragraph("© 2026 Amit Rathore. All rights reserved.",s["body_small"]),
-           Paragraph('Published at <link href="https://mindofagents.com/" color="#287d76">mindofagents.com</link>. Opentangle is one implementation of these ideas; other builders are welcome to use and challenge the design.',s["body_small"]),
+           Paragraph('Published at <link href="https://mindofagents.com/" color="#287d76">mindofagents.com</link>. <link href="https://opentangle.ai/" color="#287d76">Opentangle</link> is one implementation of these ideas; other builders are welcome to use and challenge the design.',s["body_small"]),
            Paragraph('Author: <link href="https://amitrathore.com/" color="#287d76">amitrathore.com</link> · Community: <link href="https://www.agentsofmind.com/" color="#287d76">Agents of Mind</link>',s["body_small"]),
            PageBreak(),Paragraph("CONTENTS",s["eyebrow"]),Label("Table of Contents",s["section"],"contents")]
     toc_items=[("Preface","preface")]+[(f"{i:02d}  {title}",f"chapter-{i}") for i,(_,title) in enumerate(CHAPTERS,1)]+[("Appendix  Anatomy of a Mind","anatomy"),("Subject Index","index"),("About the Author","about")]
@@ -331,14 +332,18 @@ def make_story(repo, preface, s, toc=None, index=None):
         story.append(row)
     story += [PageBreak(),Paragraph("A NOTE FROM THE AUTHOR",s["eyebrow"]),Label("Preface",s["section"],"preface")]
     body=preface.read_text(encoding="utf-8").strip().split("\n\n")
-    for p in body[1:-1]: story.append(Label(escape(p),s["body"],index_text=p))
+    for p in body[1:-1]:
+        preface_markup = escape(p).replace(
+            "Opentangle", '<link href="https://opentangle.ai/" color="#287d76">Opentangle</link>'
+        )
+        story.append(Label(preface_markup,s["body"],index_text=p))
     story += [Spacer(1,10),Paragraph("Amit Rathore",s["body"])]
     for num,(slug,title) in enumerate(CHAPTERS,1):
         root=parse_html(repo/"docs"/"read"/slug/"index.html")
         story.extend(chapter_story(root,num,title,s))
     story.extend(anatomy_story(s))
     story.extend([PageBreak(),Paragraph("REFERENCE",s["eyebrow"]),Label("Subject Index",s["section"],"index"),
-                  Paragraph("Page references point to discussions in this edition. For the latest chapters, visit mindofagents.com/read/.",s["body_small"])])
+                  Paragraph('Page references point to discussions in this edition. For the latest chapters, visit <link href="https://mindofagents.com/read/" color="#287d76">mindofagents.com/read/</link>.',s["body_small"])])
     for term in INDEX_TERMS:
         pages=sorted(set((index or {}).get(term,{}).values()))
         if pages:
