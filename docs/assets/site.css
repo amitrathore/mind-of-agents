@@ -20,3 +20,5 @@
 @media(max-width:440px){.footer-topline{flex-direction:column;gap:8px}.footer-grid{grid-template-columns:1fr}.footer-lead{grid-column:auto}.footer-column{gap:12px}.footer-column h2{margin-bottom:5px}}
 
 .protocol-home-link{margin:0 0 38px}.protocol-home-link .text-link{font-size:12px}
+
+@media(max-width:400px){.page-top h1.long-title{font-size:clamp(43px,12vw,56px)}}
