@@ -20,7 +20,7 @@ The site is published from `main` and `/docs` at <https://mindofagents.com/>. Th
 
 - `docs/index.html` — landing page
 - `docs/read/` — book outline and published chapters
-- `docs/protocol/` — interactive architecture and research notes
+- `docs/anatomy/` — interactive architecture and research notes
 - `docs/design/` — private, in-browser design exercise
 - `docs/about/` — project relationship and scope
 - `docs/assets/og-mind-of-agents.png` — social image
