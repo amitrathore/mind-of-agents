@@ -36,6 +36,9 @@ CHAPTERS = [
     ("attention-and-decision", "Attention and Decision"),
     ("action-and-reflection", "Action and Reflection"),
     ("shared-minds", "Shared Minds"),
+    ("trust-contribution-and-value", "Trust, Contribution, and Value"),
+    ("governance-and-power", "Governance and Power"),
+    ("an-open-ecology-of-minds", "An Open Ecology of Minds"),
 ]
 PARTS = {1: "PART I  /  WHAT MAKES A MIND?", 4: "PART II  /  THE ANATOMY OF AN AGENTIC MIND", 9: "PART III  /  MINDS TOGETHER"}
 ANATOMY = [
@@ -55,7 +58,7 @@ ANATOMY = [
 INDEX_TERMS = [
     "accountability", "action", "agentic mind", "agents", "attention", "authority",
     "boundaries", "consent", "context", "contribution", "decision", "delegation",
-    "governance", "identity", "independence", "learning", "memory", "Opentangle",
+    "governance", "identity", "independence", "learning", "memory", "MoM", "Opentangle",
     "participants", "protocols", "provenance", "purpose", "reflection", "roles", "trust",
 ]
 
@@ -132,6 +135,8 @@ def inline(node):
         return f"<i>{body}</i>"
     if node.tag == "a":
         href = node.attrs.get("href", "")
+        if href.startswith("../../"):
+            href = "https://mindofagents.com/" + href[6:]
         if href.startswith("https://"):
             return f'<link href="{escape(href)}" color="#287d76">{body}</link>'
         return body
@@ -172,7 +177,7 @@ def styles():
         "exercise": ParagraphStyle("exercise", fontName="Arial-Bold", fontSize=12, leading=15, textColor=INK, spaceAfter=8),
         "note": ParagraphStyle("note", fontName="Georgia", fontSize=9, leading=13.5, textColor=SLATE, spaceAfter=7),
         "toc": ParagraphStyle("toc", fontName="Arial", fontSize=10.3, leading=15, textColor=INK),
-        "index": ParagraphStyle("index", fontName="Georgia", fontSize=9.3, leading=13.4, textColor=INK, spaceAfter=4),
+        "index": ParagraphStyle("index", fontName="Georgia", fontSize=9.3, leading=13.4, textColor=INK, spaceAfter=2),
         "caption": ParagraphStyle("caption", fontName="Arial", fontSize=8.5, leading=12, textColor=SLATE, alignment=TA_CENTER),
         "cover_title": ParagraphStyle("cover_title", fontName="Arial-Bold", fontSize=43, leading=43, textColor=PAPER),
     }
@@ -329,7 +334,7 @@ def make_story(repo, preface, s, toc=None, index=None):
     for label,key in toc_items:
         page=(toc or {}).get(key,"—")
         row=Table([[Paragraph(f'<link href="#{key}" color="#101629">{escape(label)}</link>',s["toc"]),Paragraph(str(page),s["toc"])]],colWidths=[3.95*inch,.43*inch])
-        row.setStyle(TableStyle([("VALIGN",(0,0),(-1,-1),"TOP"),("LINEBELOW",(0,0),(-1,-1),0.4,LIGHT),("TOPPADDING",(0,0),(-1,-1),9),("BOTTOMPADDING",(0,0),(-1,-1),8),("LEFTPADDING",(0,0),(-1,-1),0),("RIGHTPADDING",(0,0),(-1,-1),0)]))
+        row.setStyle(TableStyle([("VALIGN",(0,0),(-1,-1),"TOP"),("LINEBELOW",(0,0),(-1,-1),0.4,LIGHT),("TOPPADDING",(0,0),(-1,-1),6),("BOTTOMPADDING",(0,0),(-1,-1),6),("LEFTPADDING",(0,0),(-1,-1),0),("RIGHTPADDING",(0,0),(-1,-1),0)]))
         story.append(row)
     story += [PageBreak(),Paragraph("A NOTE FROM THE AUTHOR",s["eyebrow"]),Label("Preface",s["section"],"preface")]
     body=preface.read_text(encoding="utf-8").strip().split("\n\n")
@@ -349,7 +354,7 @@ def make_story(repo, preface, s, toc=None, index=None):
         pages=sorted(set((index or {}).get(term,{}).values()))
         if pages:
             shown=", ".join(f'<link href="#page-{p}" color="#287d76">{p}</link>' for p in pages)
-            story.append(Paragraph(f"<b>{escape(term.capitalize())}</b>  {shown}",s["index"]))
+            story.append(Paragraph(f"<b>{escape(term if term == 'MoM' else term.capitalize())}</b>  {shown}",s["index"]))
     story.extend([PageBreak(),Paragraph("THE AUTHOR",s["eyebrow"]),Label("About Amit Rathore",s["section"],"about"),
         Paragraph("Amit Rathore is an engineer, author, and entrepreneur whose work spans software, commerce, publishing, and organizational design. He wrote <i>Clojure in Action</i> and founded or helped build Runa, Quintype, and AwakeVC. Mind of Agents draws on his long interest in networks that help people create, coordinate, and participate on their own terms.",s["body"]),
         Paragraph('Continue the conversation at <link href="https://amitrathore.com/" color="#287d76">amitrathore.com</link>, or chat with <link href="https://amitavatar.com/" color="#287d76">AmitAvatar</link>. Explore <link href="https://awake.vc/" color="#287d76">AwakeVC</link>, <link href="https://opentangle.ai/" color="#287d76">Opentangle</link>, and the <link href="https://www.agentsofmind.com/" color="#287d76">Agents of Mind community</link>.',s["body"])])

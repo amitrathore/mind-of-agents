@@ -1,6 +1,6 @@
 # Book edition
 
-`build_book.py` assembles the published Mind of Agents chapters from `docs/read/` into one 6 × 9 inch PDF. The chapter list is deliberately explicit so an unfinished chapter cannot enter the download accidentally. The PDF includes a preface, table of contents, print Anatomy appendix, subject index with page links, and author information.
+`build_book.py` assembles the published Mind of Agents chapters from `docs/read/` into one 6 × 9 inch PDF. The chapter list is deliberately explicit so a chapter cannot enter the download accidentally. The current edition includes all twelve chapters. The PDF includes a preface, table of contents, print Anatomy appendix, subject index with page links, and author information.
 
 ## Build
 
