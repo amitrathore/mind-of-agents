@@ -26,6 +26,7 @@ The site is published from `main` and `/docs` at <https://mindofagents.com/>. Th
 - `docs/anatomy/` — interactive architecture and research notes
 - `docs/design/` — private, in-browser design exercise
 - `docs/about/` — project relationship and scope
+- `docs/work-with-amit/` — advisory inquiry page with a dynamically resizing Tally form
 - `docs/assets/og-mind-of-agents.png` — social image
 - `docs/assets/mark.svg` — favicon and site mark
 
