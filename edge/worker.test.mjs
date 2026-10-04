@@ -44,9 +44,13 @@ test('book content stays on the static origin', async (t) => {
   const original = globalThis.fetch;
   globalThis.fetch = async (request) => {
     assert.equal(request.url, 'https://www.mindofagents.com/read/identity/');
+    assert.equal(request.headers.get('cookie'), null);
+    assert.equal(request.headers.get('authorization'), null);
     return new Response('chapter');
   };
   t.after(() => { globalThis.fetch = original; });
-  const response = await worker.fetch(new Request('https://www.mindofagents.com/read/identity/'));
+  const response = await worker.fetch(new Request('https://www.mindofagents.com/read/identity/', {
+    headers: { Cookie: 'ig_vid=visitor', Authorization: 'Bearer private-token' }
+  }));
   assert.equal(await response.text(), 'chapter');
 });

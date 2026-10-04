@@ -11,7 +11,10 @@ const GAME_PATHS = new Set([
 function redirectHome(url) {
   const target = new URL('/', SITE);
   target.search = url.search;
-  return Response.redirect(target.toString(), 302);
+  return new Response(null, {
+    status: 302,
+    headers: { Location: target.toString(), 'Cache-Control': 'no-store' }
+  });
 }
 
 async function authConfig() {
@@ -60,7 +63,10 @@ export default {
       return proxyGame(request, new URL('/health', SITE));
     }
     if (GAME_PATHS.has(url.pathname)) return proxyGame(request, url);
-    // Route workers' fetch(request) continues to the configured origin.
-    return fetch(request);
+    // Static pages do not need game credentials or the visitor cookie at the origin.
+    const headers = new Headers(request.headers);
+    headers.delete('Cookie');
+    headers.delete('Authorization');
+    return fetch(new Request(request, { headers }));
   }
 };
