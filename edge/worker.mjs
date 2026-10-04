@@ -30,7 +30,10 @@ async function authConfig() {
     failure_url: `${SITE}/auth/failure`,
     logout_url: SITE
   });
-  return Response.json(config, { headers: { 'Cache-Control': 'no-store' } });
+  return Response.json(config, { headers: {
+    'Cache-Control': 'no-store',
+    'Access-Control-Allow-Origin': '*'
+  } });
 }
 
 async function proxyGame(request, url) {

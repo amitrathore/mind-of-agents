@@ -20,6 +20,7 @@ test('auth config returns to the MoA origin', async (t) => {
   assert.equal(config.success_url, 'https://www.mindofagents.com/auth/success');
   assert.equal(config.mom_base_url, 'https://www.mindofagents.com');
   assert.equal(response.headers.get('cache-control'), 'no-store');
+  assert.equal(response.headers.get('access-control-allow-origin'), '*');
 });
 
 test('referral touch uses the AoM game and returns its first-party visitor cookie', async (t) => {
