@@ -19,6 +19,7 @@
 .game-switch{display:block;border:0;background:none;color:#394e9e;padding:12px 0 0;text-decoration:underline;cursor:pointer;font-size:13px;font-weight:700}
 .game-footer-seat{border:1px solid #52637a;border-radius:999px;background:transparent;color:#dce8e6;padding:9px 13px;cursor:pointer;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
 .game-footer-seat:hover{border-color:var(--mint);color:var(--mint)}
+.game-download-feedback{font-family:var(--body);font-size:14px;color:var(--muted);margin:14px 0 0}
 .game-dialog .game-error{color:#aa2a25;font-weight:700}
 .game-dialog .game-fine,.game-dialog .game-note{font-size:14px;color:#4f5d65;margin-top:18px}
 .game-dialog .game-note{border-top:1px solid var(--line);padding-top:18px;margin-bottom:0}

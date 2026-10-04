@@ -55,3 +55,34 @@ test('book content stays on the static origin', async (t) => {
   }));
   assert.equal(await response.text(), 'chapter');
 });
+
+test('the PDF URL rejects visitors without a game sign-in', async (t) => {
+  const original = globalThis.fetch;
+  globalThis.fetch = () => { throw new Error('The origin should not be reached'); };
+  t.after(() => { globalThis.fetch = original; });
+  const response = await worker.fetch(new Request('https://www.mindofagents.com/downloads/mind-of-agents-current-edition.pdf'));
+  assert.equal(response.status, 401);
+  assert.equal(response.headers.get('cache-control'), 'private, no-store');
+});
+
+test('a signed-in reader receives the PDF without leaking their token to Pages', async (t) => {
+  const original = globalThis.fetch;
+  globalThis.fetch = async (request, options) => {
+    if (String(request) === 'https://www.agentsofmind.com/session') {
+      assert.equal(new Headers(options.headers).get('authorization'), 'Bearer reader-token');
+      return Response.json({ authenticated: true });
+    }
+    assert.equal(request.url, 'https://www.mindofagents.com/downloads/mind-of-agents-current-edition.pdf');
+    assert.equal(request.headers.get('authorization'), null);
+    assert.equal(request.headers.get('cookie'), null);
+    return new Response('pdf-bytes', { headers: { 'Content-Type': 'application/pdf' } });
+  };
+  t.after(() => { globalThis.fetch = original; });
+  const response = await worker.fetch(new Request('https://www.mindofagents.com/downloads/mind-of-agents-current-edition.pdf', {
+    headers: { Authorization: 'Bearer reader-token', Cookie: 'ig_vid=visitor' }
+  }));
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('content-disposition'), 'attachment; filename="mind-of-agents.pdf"');
+  assert.equal(response.headers.get('cache-control'), 'private, no-store');
+  assert.equal(await response.text(), 'pdf-bytes');
+});

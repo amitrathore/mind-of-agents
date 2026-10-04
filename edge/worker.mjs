@@ -2,6 +2,7 @@
 // Static content remains on GitHub Pages. These routes share AoM's MoM game.
 const SITE = 'https://www.mindofagents.com';
 const GAME = 'https://www.agentsofmind.com';
+const BOOK_PATH = '/downloads/mind-of-agents-current-edition.pdf';
 const GAME_PATHS = new Set([
   '/session', '/seats', '/join/claim', '/events', '/public/touch',
   '/coseller/claim-visitor', '/api/coseller/activate', '/api/coseller/program',
@@ -48,6 +49,32 @@ async function proxyGame(request, url) {
   });
 }
 
+async function downloadBook(request) {
+  const noStore = { 'Cache-Control': 'private, no-store' };
+  if (request.method !== 'GET') return new Response('Method not allowed', { status: 405, headers: noStore });
+  const authorization = request.headers.get('Authorization');
+  if (!authorization?.startsWith('Bearer ')) {
+    return Response.json({ error: 'sign-in-required' }, { status: 401, headers: noStore });
+  }
+  const verified = await fetch(`${GAME}/session`, {
+    headers: { Authorization: authorization, Accept: 'application/json' },
+    cache: 'no-store'
+  });
+  if (!verified.ok || !(await verified.json()).authenticated) {
+    return Response.json({ error: 'sign-in-required' }, { status: 401, headers: noStore });
+  }
+  const headers = new Headers(request.headers);
+  headers.delete('Authorization');
+  headers.delete('Cookie');
+  const origin = await fetch(new Request(request, { headers, cache: 'no-store' }));
+  if (!origin.ok) return new Response('Book download is unavailable.', { status: 502, headers: noStore });
+  const responseHeaders = new Headers(origin.headers);
+  responseHeaders.set('Cache-Control', 'private, no-store');
+  responseHeaders.set('Content-Type', 'application/pdf');
+  responseHeaders.set('Content-Disposition', 'attachment; filename="mind-of-agents.pdf"');
+  return new Response(origin.body, { status: 200, headers: responseHeaders });
+}
+
 export default {
   async fetch(request) {
     const url = new URL(request.url);
@@ -66,6 +93,7 @@ export default {
       return proxyGame(request, new URL('/health', SITE));
     }
     if (GAME_PATHS.has(url.pathname)) return proxyGame(request, url);
+    if (url.pathname === BOOK_PATH) return downloadBook(request);
     // Static pages do not need game credentials or the visitor cookie at the origin.
     const headers = new Headers(request.headers);
     headers.delete('Cookie');

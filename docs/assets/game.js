@@ -3,6 +3,7 @@
   const TOKEN_KEY = 'aom.token';
   const RETURN_KEY = 'moa.game.return';
   const SEAT_KEY = 'moa.selected-seat';
+  const BOOK_URL = '/downloads/mind-of-agents-current-edition.pdf';
   const state = { session: null, seats: [], program: null, config: null, error: '', busy: false };
   const path = location.pathname;
   const ref = new URLSearchParams(location.search).get('ref');
@@ -146,6 +147,54 @@
           : state.session.seatCount > 0 ? 'Player seat · Choose handle ↗'
             : 'Player seat · Claim handle ↗';
     }
+    renderDownload();
+  }
+
+  function renderDownload() {
+    const gate = $('#download-gate');
+    if (!gate) return;
+    if (state.error) {
+      gate.innerHTML = `<p class="game-error" role="alert">${escapeHtml(state.error)}</p><button class="button" data-download="retry">Try again</button>`;
+    } else if (!state.session) {
+      gate.innerHTML = '<p>Checking your sign-in…</p>';
+    } else if (!state.session.authenticated) {
+      gate.innerHTML = '<p>Sign in with Agents of Mind to download the complete PDF. The online chapters remain open to everyone.</p><button class="button" data-download="sign-in">Sign in to download ↗</button>';
+    } else {
+      gate.innerHTML = '<p>You’re signed in. The complete PDF is ready.</p><button class="button" data-download="book">Download the PDF ↗</button><p id="download-feedback" class="game-download-feedback" role="status"></p>';
+    }
+  }
+
+  async function downloadBook() {
+    const button = $('[data-download="book"]');
+    const feedback = $('#download-feedback');
+    if (!button || !feedback) return;
+    button.disabled = true;
+    feedback.textContent = 'Preparing your PDF…';
+    try {
+      const response = await fetch(BOOK_URL, {
+        headers: { Authorization: `Bearer ${token()}` },
+        cache: 'no-store'
+      });
+      if (response.status === 401) {
+        localStorage.removeItem(TOKEN_KEY);
+        await refresh();
+        return;
+      }
+      if (!response.ok) throw new Error('The PDF is unavailable right now. Please try again.');
+      const file = URL.createObjectURL(await response.blob());
+      const link = document.createElement('a');
+      link.href = file;
+      link.download = 'mind-of-agents.pdf';
+      document.body.append(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(file), 60000);
+      feedback.textContent = 'Download started.';
+    } catch (error) {
+      feedback.textContent = error.message;
+    } finally {
+      button.disabled = false;
+    }
   }
 
   async function activate() {
@@ -241,6 +290,13 @@
       if (event.target.id === 'game-handle-form') claimHandle(event);
     });
     document.body.append(dialog);
+
+    $('#download-gate')?.addEventListener('click', (event) => {
+      const action = event.target.closest('[data-download]')?.dataset.download;
+      if (action === 'retry') refresh();
+      if (action === 'sign-in') beginSignIn();
+      if (action === 'book') downloadBook();
+    });
   }
 
   async function boot() {
