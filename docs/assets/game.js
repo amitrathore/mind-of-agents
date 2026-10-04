@@ -2,7 +2,8 @@
 (() => {
   const TOKEN_KEY = 'aom.token';
   const RETURN_KEY = 'moa.game.return';
-  const state = { session: null, program: null, config: null, error: '', busy: false };
+  const SEAT_KEY = 'moa.selected-seat';
+  const state = { session: null, seats: [], program: null, config: null, error: '', busy: false };
   const path = location.pathname;
   const ref = new URLSearchParams(location.search).get('ref');
   const $ = (selector) => document.querySelector(selector);
@@ -10,7 +11,10 @@
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   })[char]);
   const token = () => localStorage.getItem(TOKEN_KEY);
-  const headers = () => token() ? { Authorization: `Bearer ${token()}` } : {};
+  const headers = () => token() ? {
+    Authorization: `Bearer ${token()}`,
+    ...(localStorage.getItem(SEAT_KEY) ? { 'X-Selected-Seat': localStorage.getItem(SEAT_KEY) } : {})
+  } : {};
   const seat = () => state.session?.selectedSeat;
   const roles = () => seat()?.playerRoles || (seat()?.playerRole ? [seat().playerRole] : []);
 
@@ -72,6 +76,15 @@
         json('/session', { headers: headers() }),
         json('/auth.json')
       ]);
+      state.seats = [];
+      if (state.session.authenticated && state.session.seatCount > 0) {
+        const result = await json('/seats', { headers: headers() });
+        state.seats = result.seats || [];
+        if (!seat() && state.seats.length === 1) {
+          localStorage.setItem(SEAT_KEY, state.seats[0].playerName);
+          state.session = await json('/session', { headers: headers() });
+        }
+      }
       state.program = null;
       if (seat() && roles().includes('coseller')) {
         state.program = await json('/api/coseller/program', { headers: headers() });
@@ -98,19 +111,26 @@
     if (!state.session) return '<p>Connecting to Agents of Mind…</p>';
     if (!state.session.authenticated) return `<p>Sign in with Agents of Mind to create a personal link to this page.</p>
       <button class="game-action" data-game="sign-in">Sign in to share</button>`;
+    if (!seat() && state.session.seatCount > 0) {
+      return state.seats.length
+        ? `<p>You already have ${state.seats.length === 1 ? 'a handle' : 'handles'} in Agents of Mind. Choose one to share this page.</p>
+          <div class="game-seat-list">${state.seats.map((item) => `<button class="game-seat" data-game="choose-seat" data-handle="${escapeHtml(item.playerName)}">@${escapeHtml(item.playerName)} <span aria-hidden="true">↗</span></button>`).join('')}</div>`
+        : '<p>We found your existing profile, but could not load its handle. Try again.</p><button class="game-action" data-game="retry">Try again</button>';
+    }
     if (!seat()) return `<p>Choose the public handle that will identify your contributions across Agents of Mind.</p>
       <form id="game-handle-form"><label for="game-handle">Your handle</label>
       <input id="game-handle" name="handle" maxlength="32" autocomplete="nickname" required placeholder="yourname">
       <button class="game-action" type="submit" ${state.busy ? 'disabled' : ''}>Claim handle</button></form>`;
+    const switcher = state.seats.length > 1 ? '<button class="game-switch" data-game="switch-seat">Switch handle</button>' : '';
     if (!state.program || state.program.status !== 'active' || !state.program['ref-token']) {
       return `<p>You’re here as <strong>@${escapeHtml(seat().playerName)}</strong>. Activate Coselling to share this page with your own link.</p>
-        <button class="game-action" data-game="activate" ${state.busy ? 'disabled' : ''}>Activate Coselling</button>`;
+        <button class="game-action" data-game="activate" ${state.busy ? 'disabled' : ''}>Activate Coselling</button>${switcher}`;
     }
     return `<p>Share this page as <strong>@${escapeHtml(seat().playerName)}</strong>.</p>
       <label for="game-share-url">Your link</label><input id="game-share-url" value="${escapeHtml(pageUrl())}" readonly>
       <div class="game-actions"><button class="game-action" data-game="copy">Copy link</button>
       ${navigator.share ? '<button class="game-secondary" data-game="native-share">Share…</button>' : ''}</div>
-      <p class="game-fine">${state.program['earnings-enabled']
+      ${switcher}<p class="game-fine">${state.program['earnings-enabled']
         ? 'Qualifying purchases may earn a share under the current program terms. A click alone does not earn a commission.'
         : 'Referral attribution is active. Commissions begin when eligible checkout launches.'}</p>`;
   }
@@ -119,6 +139,13 @@
     const dialog = $('#game-dialog');
     if (!dialog) return;
     $('#game-dialog-content').innerHTML = content();
+    const footerSeat = $('#game-footer-seat');
+    if (footerSeat) {
+      footerSeat.textContent = !state.session?.authenticated ? 'Player seat · Sign in ↗'
+        : seat() ? `Player seat · @${seat().playerName}${state.seats.length > 1 ? ' ↔' : ''}`
+          : state.session.seatCount > 0 ? 'Player seat · Choose handle ↗'
+            : 'Player seat · Claim handle ↗';
+    }
   }
 
   async function activate() {
@@ -138,6 +165,7 @@
     try {
       await json('/join/claim', { method: 'POST', headers: { 'Content-Type': 'application/json', ...headers() },
         body: JSON.stringify({ 'player-name': handle, roles: ['audience'] }) });
+      localStorage.setItem(SEAT_KEY, handle);
       await refresh();
       await claimVisitor();
     } catch (error) { state.error = error.message; render(); }
@@ -151,6 +179,20 @@
     catch (_) { field.select(); $('#game-feedback').textContent = 'Select and copy your link.'; }
   }
 
+  async function chooseSeat(name) {
+    if (!state.seats.some((item) => item.playerName === name)) return;
+    localStorage.setItem(SEAT_KEY, name);
+    await refresh();
+    await claimVisitor();
+  }
+
+  function switchSeat() {
+    localStorage.removeItem(SEAT_KEY);
+    if (state.session) state.session.selectedSeat = null;
+    state.program = null;
+    render();
+  }
+
   function mount() {
     const header = $('.header-inner');
     if (!header) return;
@@ -160,6 +202,20 @@
     button.textContent = 'Share & earn ↗';
     button.addEventListener('click', () => $('#game-dialog').showModal());
     header.append(button);
+
+    const footer = $('.footer-bottom');
+    if (footer) {
+      const footerSeat = document.createElement('button');
+      footerSeat.id = 'game-footer-seat';
+      footerSeat.className = 'game-footer-seat';
+      footerSeat.type = 'button';
+      footerSeat.textContent = 'Player seat · Sign in ↗';
+      footerSeat.addEventListener('click', () => {
+        if (seat() && state.seats.length > 1) switchSeat();
+        $('#game-dialog').showModal();
+      });
+      footer.append(footerSeat);
+    }
 
     const dialog = document.createElement('dialog');
     dialog.id = 'game-dialog';
@@ -176,6 +232,8 @@
       if (action === 'retry') refresh();
       if (action === 'sign-in') beginSignIn();
       if (action === 'activate') activate();
+      if (action === 'choose-seat') chooseSeat(event.target.closest('[data-handle]').dataset.handle);
+      if (action === 'switch-seat') switchSeat();
       if (action === 'copy') copyLink();
       if (action === 'native-share' && navigator.share) navigator.share({ url: pageUrl(), title: document.title });
     });
