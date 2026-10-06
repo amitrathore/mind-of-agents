@@ -89,3 +89,25 @@
 .prose a[href*="/glossary/#"],.section-intro a[href*="/glossary/#"],.hero-copy a[href*="/glossary/#"]{text-decoration-thickness:1px;text-underline-offset:3px}
 @media(max-width:900px){.glossary-intro,.glossary-section{grid-template-columns:1fr;gap:26px}.glossary-nav{justify-content:flex-start}.glossary-section-heading{position:static}.glossary-section{padding:65px 0}}
 @media(max-width:650px){.glossary-intro{padding-bottom:38px}.glossary-section{padding:55px 0}.glossary-list{grid-template-columns:1fr;gap:11px}.glossary-entry{padding:22px 22px 18px}.glossary-entry dt{font-size:24px;margin-bottom:13px}.glossary-entry dd{font-size:16px;margin-bottom:19px}}
+.hero-audience{font-family:var(--body);font-size:18px;line-height:1.5;margin:0 0 22px;max-width:560px;color:#dfe6f5}
+.hero-download-note{margin:16px 0 0}
+.hero-disclaimer{font-family:var(--body);font-size:13px;line-height:1.5;margin:26px 0 0;max-width:560px;color:#9fb0cc}
+.trio{list-style:none;margin:0;padding:24px 0;display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.trio li{display:flex;flex-direction:column;gap:6px;font-family:var(--body);font-size:16px;line-height:1.45}
+.trio strong{font-family:var(--display);font-size:20px;letter-spacing:-.03em}
+.trio-role{font-family:var(--display);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#4d63c3}
+.trio .text-link{font-size:10px;margin-top:4px}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:0 0 34px}
+.ba-col{padding:26px 30px;border:1px solid var(--line);background:#fffdf9}
+.ba-before{border-top:5px solid #c4604a}.ba-after{border-top:5px solid #2f9c86}
+.ba ul{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:14px;font-family:var(--body);font-size:16px;line-height:1.5;color:#424c5a}
+.ba b{display:block;font-family:var(--display);color:var(--ink);letter-spacing:-.02em}
+.five-q{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,1fr);gap:16px;counter-reset:q}
+.five-q li{counter-increment:q;border:1px solid var(--line);background:#fffdf9;padding:20px;font-family:var(--body);font-size:16px;line-height:1.45}
+.five-q li:before{content:"0" counter(q);display:block;font-family:var(--display);font-size:10px;font-weight:700;letter-spacing:.14em;color:#4d63c3;margin-bottom:10px}
+.five-q b{display:block;font-family:var(--display);font-size:19px;letter-spacing:-.03em;margin-bottom:6px}
+.q-note{font-family:var(--body);font-size:15px;margin:20px 0 0;color:#5b6573}
+.paths{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:1000px){.five-q{grid-template-columns:1fr 1fr}.paths{grid-template-columns:1fr}}
+@media(max-width:800px){.trio,.ba{grid-template-columns:1fr}}
+@media(max-width:650px){.five-q{grid-template-columns:1fr}.ba-col{padding:22px}}
