@@ -13,9 +13,13 @@ const parts = {
   resources: {number:'12',body:'THE PULSE',title:'Time & resources',description:'Work unfolds over time and consumes attention, compute, money, and other finite resources.',question:'When does work expire, and what limits keep it sustainable?'},
 };
 
+const order = Object.keys(parts);
+let current = 'identity';
+
 function selectPart(key) {
   const part = parts[key];
   if (!part) return;
+  current = key;
   document.querySelector('#protocol-count').textContent = `${part.number} / 12`;
   document.querySelector('#protocol-body-name').textContent = part.body;
   document.querySelector('#protocol-title').textContent = part.title;
@@ -26,7 +30,13 @@ function selectPart(key) {
     element.classList.toggle('is-active', active);
     if (element.tagName === 'BUTTON') element.setAttribute('aria-pressed', String(active));
   });
+  const hint = document.querySelector('.protocol-start');
+  if (hint && key !== 'identity') hint.remove();
 }
+
+const step = delta => selectPart(order[(order.indexOf(current) + delta + order.length) % order.length]);
+document.querySelector('#protocol-next')?.addEventListener('click', () => step(1));
+document.querySelector('#protocol-prev')?.addEventListener('click', () => step(-1));
 
 document.querySelectorAll('[data-part]').forEach(element => {
   element.addEventListener('click', () => selectPart(element.dataset.part));
